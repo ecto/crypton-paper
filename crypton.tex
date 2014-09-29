@@ -6,25 +6,22 @@
 \usepackage{fixltx2e}
 \usepackage{url}
 
-
 \begin{document}
 
 
 \title{Crypton: Zero-Knowledge Application Framework}
 
 \author{
-  \IEEEauthorblockN{David Dahl}
-  \IEEEauthorblockA{Project Director\\ ddahl@spideroak.com}
-  \and
   \IEEEauthorblockN{Cam Pedersen}
-  \IEEEauthorblockA{Principal Engineer\\ cam@spideroak.com}
+  \IEEEauthorblockA{Engineer, Crypton\\ cam@spideroak.com}
+  \and
+  \IEEEauthorblockN{David Dahl}
+  \IEEEauthorblockA{Director, Crypton\\ ddahl@spideroak.com}
 }
 
 \maketitle
 
 \begin{abstract}
-INCOMPLETE DRAFT DO NOT DISTRIBUTE
-
 Applications intended to work on multiple devices or those that
 store large enough amounts of data must save their data to a backend server
 rather than locally. Privacy of users is typically only protected on the wire
@@ -37,6 +34,9 @@ Crypton uses end-to-end encryption, provides application developers
 with high-level APIs for user accounts, robust data storage, and
 sharing information between users. We detail the framework's cryptographic
 structure and its implementation architecture.
+\\
+\\
+Project homepage: https://crypton.io
 \end{abstract}
 
 \section{Introduction}
@@ -51,29 +51,19 @@ Crypton is a unique way to build applications, primarily because it
 makes it simple for developers to store data with a server in such a way
 that the server doesn't know what that data is.
 Additionally, all Crypton-based applications are built solely on the client,
-and the server acts as a smart pipe to the database to store and retrieve data
-for authenticated users. A side effect of this architecture is that working with the framework is not dissimilar to using a "backend as a service".
-
-Crypton's initial implementation has been built with JavaScript on the
-client and server. JavaScript was chosen as it is the language of the web
-and the large body of developers already engaged in JavaScript development.
-JavaScript has also established itself in desktop and mobile rapid application
-environments such as Microsoft Windows\cite{JavaScriptWindows},
-Cordova\cite{Cordova} and node-webkit\cite{nodewebkit}.
-This has led to several design considerations (which are...).
-In this paper however, we will concentrate on the framework's
-concepts moreso than its implementation details. These concepts may be used
-to port the client side to nearly any platform.
+and the server acts only as a smart pipe to the database to store and retrieve data
+for authenticated users. A side effect of this architecture is that working with
+the framework is not dissimilar to using a "backend as a service".
 
 \subsection{Motivation}
 Moving forward from the success of SpiderOak's desktop backup client,
-the logical progression is to use the Zero-Knowledge concepts in new ways,
+the logical progression is to use its Zero-Knowledge concepts in new ways -
 specifically in communications applications popular on mobile devices
 and desktop computers. Internet users today are tracked in unprecedented
 ways by the advertising juggernaut that exists on the web as well as the
 constant, blanket surveillance employed by many governments.
 Email has always been about as private as sending a post card via the mail
-service, while some headway has been made in making SSL/TLS the standard
+service. While some headway has been made in making SSL/TLS the standard
 way of protecting SMTP, there are glaring gaps. With this in mind,
 SSL is not ever-present on all servers our browsers connect to,
 and even if it was, there are massive problems with SSL and the
@@ -83,7 +73,7 @@ Certificate Authorities being tricked into or via intrusion issuing
 trivial to pull off, as well as massive zero-day bugs in popular SSL
 encryption libraries such as OpenSSL.
 
-The best defense includes the concept of 'defense-in-depth'\cite{defenseindepth}.
+The best defense includes the concept of "defense-in-depth"\cite{defenseindepth}.
 One technique is to use end-to-end encryption as well as an encrypted network
 channel to move private data back and forth to servers and between users.
 Making this easy for everyday developers who are not security experts is
@@ -93,9 +83,11 @@ applications.
 
 Crypton is primarily an exercise in improving the UX of cryptographic
 software both from the software engineer's perspective and the
-end users who use said software. Starting with the framework,
-we employ JavaScript itself as an improvement in the UX of building
-more private and secure applications. The Crypton tool set is well known
+end users who use said software. Starting with the framework's clients,
+we employ idiomatic data structures and APIs as an improvement in the UX of building
+more private and secure applications. The reference client has been written in
+JavaScript, though there will be clients ported to other platforms with the similar
+syntactic sugar. The Crypton backend tool set is well known
 and loved by developers: node.js, Redis and PostgreSQL. The APIs that
 Crypton provides are elegant and require no special knowledge of cryptographic
 algorithms, methods, or mathematics. It is designed to be elegant, requiring,
@@ -120,21 +112,21 @@ and issue tracker open source is a paramount motivation.
 
 \subsubsection{SJCL}
 SJCL is a JavaScript library that implements a set of cryptographic 
-primitives\cite{sjcl}. It is used in Crypton until a native bridge API
-such as the Web Crypto API has found sufficient footing in browsers.
+primitives\cite{sjcl}. It is used in Crypton until a native API is exposed to JavaScript,
+such as the Web Crypto API, and has found sufficient footing in browsers.
 While SJCL was chosen over several other similar libraries, such as
 CryptoJS\cite{cryptojs}, for speed and feature concerns,
 it is still slower than a native option would allow. Additionally,
 key material is hard to guard from exploits such as XSS in an interpreted
-environment. We will revisit these concerns later in the paper.
+environment. It has however been invaluable in reaching a working system quickly.
 
 \subsubsection{Mylar}
 Mylar\cite{mylar} is a project with aspirations similar to
-Crypton - encrypting and decrypting users' data in a browser context.
-However, it also attemps\cite{mylarpaper} to solve extraneous problems
-such as server-side keyword search over encrypted documents. We have chosen
-to keep Crypton as simple as possible and allow developers to add functionality
-like this by use of Crypton's client-side Container structures.
+Crypton - encrypting and decrypting users' data in an end-to-end and idiomatic context.
+However, it also attempts\cite{mylarpaper} to solve extraneous problems
+such as server-side keyword search over encrypted documents.
+We have chosen to keep Crypton as simple as possible and allow developers to add
+functionality like this by use of Crypton's client-side Container structures.
 
 Mylar is intended to be used in the browser as a traditional web application,
 employing a browser extension to verify dynamically loaded code. Crypton is meant
@@ -167,17 +159,20 @@ that language parity with the client brings.
 
 Docker is used to homogenize backend deployment. This leads to ease of
 use from a development perspective and the hope of decreased server
-security mistakes that a unified process brings.
+security mistakes that a unified and deterministic process brings.
 
-%\subsection{Ciphers}
-%Before continuing, it is important to note that all future mentions
-%of encryption or decryption assume AES256 in Gallois/Counter Mode %(GCM)\cite{gcm}.
-%We utilize the Elgamal encryption scheme using elliptic curve p384 for keys.
-%CLEAN ME UP! \^\
+\subsection{Ciphers}
+Before continuing, it is important to note that all future mentions
+of encryption or decryption assume AES256 in Gallois/Counter Mode(GCM)\cite{gcm}.
+We utilize the ElGamal\cite{elgamal} encryption scheme and ECDSA\cite{ecdsa}
+for signature verification, using elliptic curve p384\cite{curves} for key generation.
+These are what we used to implement the reference client, but they can
+be switched out for competing algorithms if desired.
 
 \subsection{Frontend}
 Crypton clients may be implemented in any context where their code may be
-packaged and verified. All data is passed RESTfully using JSON over SSL.
+packaged and verified. All communication with the server is achieved
+RESTfully using JSON over HTTPS.
 
 \subsection{Accounts}
 Each user of a Crypton application must have an Account.
@@ -190,7 +185,8 @@ the user's \(password\) and \(keypair\_salt\) to generate a \(keypair\_key\)
 with PBKDF2\cite{pbkdf2}. A \(keypair\_mac\_key\) is also generated with
 the \(keypair\_mac\_salt\).
 
-The \(keypair\_key\) is used to decrypt the 
+The \(keypair\_key\) is used to decrypt the main \(keypair\). The private key
+from this \(keypair\) is used to decrypt all other keys in the \(Keyring\).
 
 \subsubsection{Keyring}
 Each account has a keyring.
@@ -224,7 +220,6 @@ sign\_key\_private\_mac & MAC used to verify \(sign\_key\_private\) \\
 \label{table:nonlin}
 \end{table}
 
-
 \subsection{Transactions}
 All client operations which affect the state of the database are performed
 with composable transactions. These are typically hidden from developers -
@@ -235,7 +230,8 @@ new atomic action sets.
 \subsubsection{Transaction Chunks}
 Transaction Chunks are the actions which may be individually or collectively
 added to a transaction. Data attached to a Chunk is referred to as its "payload".
-It may require specific data or none at all.
+It may require specific data or none at all. We will not define data payloads
+in this paper as they are numerous and can largely be inferred.
 
 \subsubsection{Transaction Lifecycle}
 Transactions must first be created - this provides a unique identifier for
@@ -245,7 +241,8 @@ considered valid.
 
 When a client is done composing a transaction, it may request the backend
 to commit it. This is typically a synchronous operation from the client's
-perspective, but transaction processing is up to the backend's discretion.
+perspective, but the timing of transaction processing is up to the backend's
+discretion and is variable depending on the volume of the queue.
 
 \begin{table}[ht]
 \caption{Crypton Transaction Chunk Types}
@@ -262,7 +259,8 @@ set\_base\_keyring & add or change keyring for account \\
 add\_container & create a new container \\
 delete\_container & delete an existing container \\
 add\_container\_session\_key & add session key for container \\
-add\_container\_session\_key\_share & add wrapped session key \\ & \ \ for a given container and account \\
+add\_container\_session\_key\_share & add wrapped session key \\ & \ \ for a
+given container and account \\
 add\_container\_record & add a new record for given container \\
 add\_message & add a user-to-user message \\
 delete\_message & delete a user-to-user message \\
@@ -282,11 +280,12 @@ A separate dequeueing program (or likely a clustered deployment of said program)
 will watch for and process incoming transactions. All pre-processing rows are
 pulled from the database which belong to the transaction in question. This
 data is checked for logical consistency (a record may not be added to a
-nonexistant container) and stored in temporary tables. It is then checked for
-semantic consistency (two accounts may not have the same username) and its
-changes are commited to the database.
-
-CLEAN ME UP \^
+nonexistant container) and stored in temporary tables. These tables act as
+locks in the case of a conflicting transaction that is being concurrently processed.
+It is checked for semantic consistency (e.g. two accounts may not have the same username)
+and its changes are commited to the database if there are no conflicts. If there are
+conflicts, the client is informed that its commit has failed and will typically
+retry the commit (or make changes to resolve the conflict).
 
 \subsection{Containers}
 Containers provide the main logical abstraction for data storage in Crypton.
@@ -301,34 +300,34 @@ the client must first HMAC the container name with their account's
 \(container\_name\_hmac\_key\).
 
 The second exception is that they may be saved. When they are saved, a
-Container Record is created. MORE \^
+Container Record is created.
 
 \subsubsection{Container Records}
 Container Records are defined as discrete changes between versions of a
 container.
 
 When a container is saved on a client, the delta between its
-last known version is calculated and encrypted. This is sent the server
-with the \(add\_container\_record\) transaction chunk.
+last known version is calculated and encrypted. This is sent to the server
+as a \(payload\) value in an \(add\_container\_record\) transaction chunk.
 
 When a container is loaded, all of its encrypted deltas are sent to the
-client, are decrypted, and the state of the object is rebuilt using them.
+client, decrypted, and the state of the object is rebuilt using them.
 
 \subsubsection{Container Session Keys}
 Container Records are encrypted with a per-container key called the Container
-Session Key.
+Session Key. These are never stored with the server.
 
 \subsubsection{Container Session Key Shares}
-Container Session Key Shares are wrapped versions of Container Session Key.
+Container Session Key Shares are public-key-wrapped versions of Container Session Key.
 When a container is loaded, the server will send the client a 
 \(container\_session\_key\_share\) for its account, which it must decrypt with
 its private key, providing a \(container\_session\_key\).
 
 This allows a container to be shared with another account by a user who
 already has access to that container. This is done by encrypting the
-\(container\_session\_key\) with that user's public key.
-Giving oneself access to a container and sharing that container are effectively
-the same operation.
+\(container\_session\_key\) with that user's public key and signing with their
+private signing key. Giving oneself access to a container and sharing that
+container are effectively the same operation but with different keys.
 
 \subsection{Messages}
 Messages are an additional data structure Crypton provides for when Containers
@@ -336,126 +335,251 @@ are not the best option - typically in a situation where you have to send
 data to another user in a one-off fashion and don't require versioning or
 sharing.
 
-Crypton Messages are implemented traditional public-key messages.
+Crypton Messages are implemented as traditional public key messages, similar to PGP.
+Their \(body\) and \(headers\) are encrypted to the Peer's public key and signed
+with the originated user's private signing key.
+
+Messages are created and destroyed with \(add\_message\) and \(delete\_message\)
+transaction chunks, respectively.
 
 \subsubsection{Headers}
+Along with a message's \(body\), metadata may be included in a message's
+\(headers\). This allows Crypton to preserve privacy for application-specific
+metadata in messages and gives clients an efficient route to retreive this data
+without decrypting a full message body.
 
 \subsection{Peers}
-Each user account is considered a "Peer". A Peer's existence can be ascertained if the querying user knows the exact Peer username:
+In order to share a container or send a message to another account,
+a user must access the public keys of the receiving account. This set of
+keys is referred to in Crypton as a Peer. These keys are obtained by querying the
+Crypton server by username. Because there is an obvious attack vector of a server
+impersonating the requested keys, Peer keys are required to be verified before
+they are used.
 
-% TODO code styling??
-session.getPeer('alice', function(err, peer) {});
+\subsubsection{Fingerprint}
+Initialized Peer classes in Crypton clients generate a \(fingerprint\) of the
+construction \(SHA256(EK_p\ |\ delimiter\ |\ SK_p)\), where \(EK_p\) is the
+public encryption key and \(SK_p\) is the public signing key. SHA256 is used to
+avoid preimage and collision attacks.
 
-Once a peer is known, a fingerprint verification is required in order to establish the peer in the user's trusted contacts container\cite{trustStateContainer}
-
-A peer cannot be communicated with unless it exists inside the 'trustStateContainer'.
-
-\subsubsection{Peer Verification}
-Peer verification is best performed in an out-of-band manner. The best approach here is for an app developer enable the app to send an out of band email or sms message to relay the fingerprint of user "alice" to user "bob". Once the Bob has Alice's fingerprint, he can verify it against the peer.fingerprint stored on the Crypton server. With a match, Bob can "verify" Alice and her peer data (username, fingerprint, public key) can then be stored in Bob's "Trust State Container"\cite{trustStateContainer}
+Peer verification is expected to be performed in an out-of-band manner.
+The best approach is for an application developer enable their application
+to email or SMS the fingerprint of user Alice to user Bob. Once Bob has Alice's 
+fingerprint, he can use it verify the keys sent by the Crypton server. If they
+don't match, the user can suspect the server is acting maliciously. If they
+do match, Bob can \(trust()\) Alice's peer object by storing her \(fingerprint\)
+in his Trust State Container.
 
 \subsection{Trust State Container}
-The "Trust State Container" is a normal Crypton container that is generated during account generation. This conatiner is used to keeo track of each peer that a user verifies out of band via a fingerprint sent over SMS, email, or perhaps even collected vi a QRCode\cite{QRCode}.
+The Trust State Container is a normal Crypton container that is created
+during account generation. When the \(trust()\) method on a peer object is called,
+their fingerprint is stored in this container along with their username. This
+container may be used as a "contacts list", but should be treated as readonly
+on the application level.
 
-These peer/fingerprint APIs and verification steps (especially if used in an "out of band" manner), allow for a system that can detect changed fingerprints on the server in order to warn users that the peer they want to communicate with might be an imposter.
+These verification steps allow for a system that can detect changed fingerprints
+from the server in order to warn users that the peer they want to communicate with
+might be an impostor.
 
-\subsestion{New Metaphors}
-Crypton's peer verification and contact storage mechanisms include an effort to create new metaphors in privacy-centered applications. Instead of using terms like "Fingerprint" and "Public Key", we want to find a metaphor that everyday Internet users better understand. Our most recent API includes an object called "Card". Card can generate an "ID Card" for each user that can be sent out of band as an SMS or email attachment. This ID card has a fingerprint on it, but also includes the username, a QRCode and an "Identigrid". The "Identigrid" is a 4X4 square color grid that translates the plain text fingerprint to colors, making it easier to quickly verify it.
-
-Naturally, the use of a QRCode\cite{QRCode} allows developers to nearly automate the fingerprint verification and key exchange. We strongly encourage developers to use the QRCode as it allows for more automation. The Crypton team has planned for some UX research in 2015 around the "Identigrid" concept versus manual fingerprint verification of long strings.
-
-% Add Identigrid Image here
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.3\textwidth]{identigrid-example.jpg}
-  \caption{Identigrid}
+  \includegraphics[width=0.25\textwidth]{id-card-border.png}
+  \caption{Identity Card Example}
 \end{figure}
 
-% Add ID CARD Image here
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.3\textwidth]{id-card-example.png}
-  \caption{ID Card with Photo}
-\end{figure}
+\subsection{Identity Cards}
+Crypton's peer verification mechanism also includes an effort
+to create new metaphors in privacy-centered applications. Instead of teaching
+users about public key cryptography, we wanted to find a metaphor that everyday
+users will easily understand.
 
-The basic concept is that Bob needs a copy of Alice's ID Card and Alice needs a copy of Bob's in order to establish a private communications channel. With the plain text fingerprint, "Identigrid", QRCode (and perhaps a photo), the verification of a peer becomes a familiar step to the vast majority of users who understand what an ID card in the physical realm is. 
+Crypton clients are expected to implement a Card generation class. This class
+will take an Account object as input and output an image with username, application
+name, colorized fingerprint, and a QR code. It is also expected to provide a method
+taking a QR code-containing image as input to verify to peer automatically.
 
-{Threat Model}
+Rather than send a textual fingerprint to another user, Crypton applications
+utilizing multi-user features are expected to generate and send a Card out of band
+for consistency and the propagation of an understandable metaphor. These applications
+are also expected to display a client-generated Card of the other party for verification.
+
+\subsubsection{QR Code}
+QR codes were chosen for their ubiquity and machine-readable properties. When
+Bob receives Alice's ID Card out of band, he can simply load it into a
+Crypton-enabled application and let his device verify the parity of the fingerprints.
+Data in the QR code is encoded with JSON and contains the fields found in Table III.
+
+\begin{table}[h]
+\caption{Identity Card QR Fields}
+\centering
+\begin{tabular}{l l}
+\hline\hline
+\\ [0.1ex]
+Name & Definition \\
+\\ [0.1ex]
+\hline
+\\ [0.3ex]
+version & version of this data structure \\
+username & username of peer \\
+fingerprint & \(fingerprint\) of user's public keys  \\
+application & name of application which generated this card \\
+signature & signature of fingerprint, \\
+  & \ \ proving the user has access their private key \\
+\\ [0.3ex]
+\hline
+\end{tabular}
+\label{table:nonlin}
+\end{table}
+
+\subsection{Colorized Fingerprint}
+For users who wish to verify the fingerprint manually, it is presented on the
+bottom of the Card as a series of two-octet sections (for readability). The
+sections are assigned a hexadecimal color by taking their first octet for the
+red value, second octet for the green value, and the first octet of the next section
+for their blue value - this provides cascading errors which further draw the user's
+attention to discrepancies. Colorization is not to be relied upon as a verification
+mechanism, only to make it easier to identify differences in the content of the
+fingerprint.
+
+\section{Threat Model}
 \subsection{Assumptions}
-Crypton has initially been developed in JavaScript, however, there are no
-apparent difficulties in porting these concepts to a another language.
+Crypton has initially been developed in JavaScript. However, there are no
+apparent difficulties in porting its concepts to a another language.
 In its use of JavaScript, it could be easily assumed that Crypton was meant to
 be used in a web browser - this is incorrect. Browsers are beset by a problem of
-unverifiable code delivery in that users cannot verify that
-the code they received is as intended. Therefore, it is only recommended to use
-Crypton in packaged applications. Tools such as Cordova or node-webkit are
-recommended for packaging Crypton-based applications.
+unverifiable code delivery in that users cannot verify that the script they received
+from the server is as intended. Therefore, it is only recommended to use
+Crypton in packaged applications. Tools such as Cordova\cite{cordova} or
+node-webkit\cite{nodewebkit} are
+used for packaging Crypton applications using the JavaScript client.
+Clients implemented on disparate platforms are also expected to be distributed
+in a packaged manner.
 
-\subsection{Guarantees}
+\subsection{Strengths}
+Crypton at its core provides a cryptosystem meant to protect users' data,
+share that data with other users, and send messages directly between users.
+This is all meant to happen with the server having no knowledge about the content
+of these messages or data containers. Furthermore, with the use of HMACs as public 
+container names, the server's knowledge of application metadata is hindered.
+
+In the use of SRP for authentication, without storing a password equivalent,
+data compromise in a server breach is limited if not negligible. Without a user's
+password, the only effective attack on that user's data would be to bruteforce
+AES keys.
 
 \subsection{Threats}
+There are several problems which Crypton is not designed to mitigate.
+In the event of a server compromise, the following threats to a Crypton system
+are applicable:
 
-\subsubsection{IP storage}
+\subsubsection{Traffic storage}
+IP addresses or hostnames belonging to those accessing the server may be stored
+by a malicious server operator or attacker, reducing the pseudoanonymity afforded
+to users of a Crypton system (email addresses are not required for account generation).
+This can be mitigated by accessing the server with Tor\cite{tor} or a similar system.
+
 \subsubsection{Peer graph analysis}
+Usernames are stored in plaintext by the server. Database records can be analyzed
+to connect sharing and message networks between usernames. If this is used in
+concert with traffic storage, the identities of a Crypton application's users may
+be compromised.
+
 \subsubsection{Container access frequency analysis}
-
-\subsection{Key Distribution}
-
-\section{Performance}
-
-\section{Additional Considerations}
-
-\subsection{Federation}
-\subsection{Advertisement}
-
-\section{Use Cases}
-This section could grow too large. Let's get rid of it?
-
-\subsection{Private Diary}
-\subsection{Encrypted Search}
-\subsection{Private Location Sharing}
+Certain containers, such as the Trust State Container, are created, accessed, or
+updated in a deterministic manner. A sophisticated attack may disclose
+the identity of certain containers to narrow a bruteforce decryption attack.
+This can be limited by choosing a strong password.
 
 \section{Future Work}
 
 \subsection{Container Compaction}
+As containers are used over time, many records may be added to them. In order to
+load a container, all of these records must be decrypted and parsed by the client.
+As a result, loading a container will grow slower over the course of its lifetime
+if it is constantly updated.
+
+Container compaction would add a new transaction chunk type which, when provided with
+the ultimate desired state of the container (and barring transactional conflicts),
+would remove all past records for that container and leave only the latest state.
+This would decrease load times for heavily used containers significantly.
+
+"Autocompaction" is also an interesting avenue to pursue, where compaction would occur
+automatically upon saving a container. This would be useful for applications which
+don't care to save historical versions of their data structures.
+
+\subsection{Container caching}
+Another improvement to container load times would be to cache encrypted container
+records locally and sync them with what the server provides. This will require the
+addition of event emission and perhaps Operational Transformations to the Container
+class in order to work safely.
+
 \subsection{Multiple Client Implementations}
+The JavaScript client was developed as a reference implementation. The cryptosystem
+is sufficiently abstracted so that it may be implemented on most platforms. This
+will be most easily acheived by implementing a core client in C. Wrappers may be
+written in Objective-C, Java, etcetera to provide syntactic sugar and
+platform-idiomatic APIs.
+
 \subsection{Hosted Backend}
-\subsection{Zero Knowledge Payments}
+A service is being developed to host back-end Crypton servers. This means there
+will only be front-end development work for someone wishing to build a Crypton
+application.
 
 \section{Conclusion}
-The conclusion goes here.
+Today's application developers have the responsibility to protect their users' data.
+We have seen in the recent past where SSL did not protect users\cite{SSLImpersonation}
+making it an imperfect solution for online data security. End-to-end encryption
+technology, frameworks and services are the best hope for a truly private application
+development environment. Crypton's approach is an attempt at filling this gap in the
+marketplace. While Crypton cannot solve all data security problems we have today, it is
+a good start in the direction of allowing developers without a concentration in
+cryptography a framework that keeps application data private.
 
-\section{Call To Action}
-Modern application developers have the \footnote{regrettably} new found responsibility
-to protect their users' data.
+It is too much to ask all developers interested in building applications that are
+centered on privacy to become proficient in cryptographic primitives and their
+use in secure cryptosystems. This being the case, Crypton is a small step
+toward a more private application development future.
+
+The chief concern of Crypton is the user experience of developers from the API level
+all the way up to the user interface endusers utilize for key exchange. With the
+cryptography hidden from the developer and new metaphors like "ID cards" to replace
+"key exchange", the authors think the way is paved toward every developer having
+the ability to create simple, secure, and private applications.
 
 Whether you utilize Crypton or not, the authors implore you to protect yourself
-and your users from adversaries by encrypting all data, not only on the wire but at rest.
+and your users from adversaries by encrypting all data, not only on the wire but
+at rest.
 
 \section*{Acknowledgment}
-The authors would like to thank...
+The authors would like to thank Alan Fairless and David Zuwenden for creating the
+original Crypton specification, Tommy Williams for incredible API feedback and
+early application work, Chip Black for work on SRP implementation, and Tomas
+Touceda for internal security reviews.
 
 \newpage
-\begin{thebibliography}{20}
-\bibitem{JavaScriptWindows} \url{http://msdn.microsoft.com/en-us/library/windows/apps/br229565.aspx}
-\bibitem{Cordova} \url{http://cordova.apache.org/}
-\bibitem{nodewebkit} \url{https://github.com/rogerwang/node-webkit}
-\bibitem{defenseindepth} \url{http://en.wikipedia.org/wiki/Defense_in_depth_%28computing%29}
-\bibitem{spying} \url{https://www.eff.org/nsa-spying}
-\bibitem{SRP} \url{https://www.ietf.org/rfc/rfc2945.txt}
-\bibitem{sjcl} \url{https://crypto.stanford.edu/sjcl/}
-\bibitem{webcrypto} \url{http://www.w3.org/TR/WebCryptoAPI/}
-\bibitem{cryptojs} \url{https://code.google.com/p/crypto-js/}
-\bibitem{xss} \url{https://en.wikipedia.org/wiki/Cross-site_scripting}
-\bibitem{mylar} \url{http://css.csail.mit.edu/mylar/}
-\bibitem{mylarpaper} \url{http://css.csail.mit.edu/mylar/mylar.pdf}
-\bibitem{endtoend} \url{https://code.google.com/p/end-to-end/}
-\bibitem{QRCode} \url{http://www.qrcode.com/en/about/}
-\bibitem{endtoendkeydistribution} \url{https://code.google.com/p/end-to-end/wiki/KeyDistribution}
-\bibitem{endtoendblog} \url{http://googleonlinesecurity.blogspot.com/2014/06/making-end-to-end-encryption-easier-to.html}
-\bibitem{srp-protocol} \url{http://srp.stanford.edu/design.html}
-\bibitem{pbkdf2} \url{https://tools.ietf.org/html/rfc2898}
-\bibitem{gcm} \url{http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf}
-\bibitem{IEEEhowto:kopka} H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus 0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-\bibitem{trustStateContainer} A default Crypton container that holds all "trusted" contact usernames and  public key fingerprints
+%\onecolumn
+\begin{thebibliography}{14}
+%\bibitem{spying} \url{https://www.eff.org/nsa-spying}
+\bibitem{spying} Greenwald, Glenn. "NSA Collecting Phone Records of Millions of Verizon Customers Daily." 5 June 2013. \url{http://www.theguardian.com/world/2013/jun/06/nsa-phone-records-verizon-court-order}
+\bibitem{defenseindepth} "Defense In Depth." National Security Agency. \url{https://www.nsa.gov/ia/_files/support/defenseindepth.pdf}
+\bibitem{SRP} Wu, T. "The SRP Authentication and Key Exchange System." The Internet Engineering Task Force, Sept. 2000. \url{https://www.ietf.org/rfc/rfc2945.txt}
+\bibitem{sjcl} Stark, Emily, Michael Hamburg, and Dan Boneh. "Symmetric Cryptography in Javascript." Computer Science Department, Stanford University. \url{https://crypto.stanford.edu/sjcl/acsac.pdf}
+\bibitem{cryptojs} Mott, Jeff. "Crypto-js." \url{https://code.google.com/p/crypto-js/}
+\bibitem{mylar} "Mylar." MIT CSAIL Computer Systems Security Group. \url{http://css.csail.mit.edu/mylar/}
+\bibitem{mylarpaper} Pope, Raluca Ada, Emily Stark, Jonas Helfer, Steven Valdez, Nikolai Zeldovich, M. Frans Kaashoek, and Hari Balakrishnan. "Building Web Applications on Top of Encrypted Data Using Mylar." MIT CSAIL Computer Systems Security Group, Meteor Development Group. \url{http://css.csail.mit.edu/mylar/mylar.pdf}
+\bibitem{endtoendblog} Somogyi, Stephan. "Making End-to-end Encryption Easier to Use." Google Online Security Blog. Google, 3 June 2014. \url{http://googleonlinesecurity.blogspot.com/2014/06/making-end-to-end-encryption-easier-to.html}
+\bibitem{endtoend} "end-to-end." Google. \url{https://code.google.com/p/end-to-end/}
+\bibitem{endtoendkeydistribution} "end-to-end Key Distribution." Google. \url{https://code.google.com/p/end-to-end/wiki/KeyDistribution}
+\bibitem{gcm} Dworkin, Morris. "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC." National Institute of Standards and Technology. Nov. 2007. \url{http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf}
+\bibitem{elgamal} Elgamal, Taher. "A Public Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms." IEEE Transactions on Information Theory IT-31.4 (1985). \url{http://caislab.kaist.ac.kr/lecture/2010/spring/cs548/basic/B02.pdf}
+\bibitem{ecdsa} "Digital Signature Standard." National Institute of Standards and Technology, July 2013. \url{http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf}
+\bibitem{curves} "Recommended Elliptic Curves for Federal Government Use." National Institute of Standards and Technology, July 1999. \url{http://csrc.nist.gov/groups/ST/toolkit/documents/dss/NISTReCur.pdf}
+\bibitem{srp-protocol} "SRP Protocol Design." Stanford University. \url{http://srp.stanford.edu/design.html}
+\bibitem{pbkdf2} Kaliski, B. "PKCS \#5: Password-Based Cryptography Specification." The Internet Engineering Task Force, Sept. 2000. \url{https://tools.ietf.org/html/rfc2898}
+\bibitem{cordova} "Cordova." Apache. \url{https://cordova.apache.org/}
+\bibitem{nodewebkit} Wang, Roger. "node-webkit". \url{https://github.com/rogerwang/node-webkit}
+\bibitem{tor} "The Tor Project". Tor. \url{https://www.torproject.org/about/corepeople.html.en}
+\bibitem{SSLImpersonation} Goodin, Dan. "In the Wild: Phony SSL Certificates Impersonating Google, Facebook, and ITunes." Ars Technica, 12 Feb. 2014. \url{http://arstechnica.com/security/2014/02/in-the-wild-phony-ssl-certificates-impersonating-google-facebook-and-itunes/}
 \end{thebibliography}
 \end{document}
+
