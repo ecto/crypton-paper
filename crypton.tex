@@ -49,7 +49,7 @@ by yourself or an adversary.
 
 Crypton is a unique way to build applications, primarily because it
 makes it simple for developers to store data with a server in such a way
-that the server doesn't know what that data is.
+that the server doesn't know what that data conatins.
 Additionally, all Crypton-based applications are built solely on the client,
 and the server acts only as a smart pipe to the database to store and retrieve data
 for authenticated users. A side effect of this architecture is that working with
@@ -76,10 +76,7 @@ encryption libraries such as OpenSSL.
 The best defense includes the concept of "defense-in-depth"\cite{defenseindepth}.
 One technique is to use end-to-end encryption as well as an encrypted network
 channel to move private data back and forth to servers and between users.
-Making this easy for everyday developers who are not security experts is
-paramount to its proliferation. This brings us to the User Experience (UX) of
-cryptography in the realm of both developers and end users of Crypton-based
-applications.
+This makes it easy for everyday developers who are not security experts, which  is paramount to Crypton's proliferation. This brings us to the User Experience (UX) of cryptography in the realm of both developers and end users of Crypton-based applications.
 
 Crypton is primarily an exercise in improving the UX of cryptographic
 software both from the software engineer's perspective and the
@@ -126,7 +123,7 @@ Crypton - encrypting and decrypting users' data in an end-to-end and idiomatic c
 However, it also attempts\cite{mylarpaper} to solve extraneous problems
 such as server-side keyword search over encrypted documents.
 We have chosen to keep Crypton as simple as possible and allow developers to add
-functionality like this by use of Crypton's client-side Container structures.
+functionality like this via Crypton's client-side Container structures.
 
 Mylar is intended to be used in the browser as a traditional web application,
 employing a browser extension to verify dynamically loaded code. Crypton is meant
@@ -234,9 +231,9 @@ It may require specific data or none at all. We will not define data payloads
 in this paper as they are numerous and can largely be inferred.
 
 \subsubsection{Transaction Lifecycle}
-Transactions must first be created - this provides a unique identifier for
+Transactions must first be created which provides a unique identifier for
 all future actions regarding that transaction. Transaction Chunks can be added
-in batch or one at a time. Transactions must have one or more Chunks to be
+by the batch or one at a time. Transactions must have one or more Chunks to be
 considered valid.
 
 When a client is done composing a transaction, it may request the backend
@@ -273,7 +270,7 @@ delete\_message & delete a user-to-user message \\
 \subsubsection{Transaction Processing}
 As Chunks are added to a transaction, they are added as rows in
 pre-processing tables in the database. When a client requests that the
-transaction be committed, it is marked with a commit request time and added
+transaction be committed it is marked with a commit request time and added
 to a queue.
 
 A separate dequeueing program (or likely a clustered deployment of said program) 
@@ -285,7 +282,7 @@ locks in the case of a conflicting transaction that is being concurrently proces
 It is checked for semantic consistency (e.g. two accounts may not have the same username)
 and its changes are commited to the database if there are no conflicts. If there are
 conflicts, the client is informed that its commit has failed and will typically
-retry the commit (or make changes to resolve the conflict).
+retry the commit or make changes to resolve the conflict.
 
 \subsection{Containers}
 Containers provide the main logical abstraction for data storage in Crypton.
@@ -310,7 +307,7 @@ When a container is saved on a client, the delta between its
 last known version is calculated and encrypted. This is sent to the server
 as a \(payload\) value in an \(add\_container\_record\) transaction chunk.
 
-When a container is loaded, all of its encrypted deltas are sent to the
+When a container is loaded all of its encrypted deltas are sent to the
 client, decrypted, and the state of the object is rebuilt using them.
 
 \subsubsection{Container Session Keys}
@@ -330,9 +327,9 @@ private signing key. Giving oneself access to a container and sharing that
 container are effectively the same operation but with different keys.
 
 \subsection{Messages}
-Messages are an additional data structure Crypton provides for when Containers
-are not the best option - typically in a situation where you have to send
-data to another user in a one-off fashion and don't require versioning or
+Messages are an additional data structure Crypton provides when Containers
+are not the best option. Messages are typically used in a situation where you have to send
+data to another user in a one-off fashion and do not require versioning or
 sharing.
 
 Crypton Messages are implemented as traditional public key messages, similar to PGP.
@@ -349,7 +346,7 @@ metadata in messages and gives clients an efficient route to retreive this data
 without decrypting a full message body.
 
 \subsection{Peers}
-In order to share a container or send a message to another account,
+In order to share a container or send a message to another account
 a user must access the public keys of the receiving account. This set of
 keys is referred to in Crypton as a Peer. These keys are obtained by querying the
 Crypton server by username. Because there is an obvious attack vector of a server
@@ -363,10 +360,10 @@ public encryption key and \(SK_p\) is the public signing key. SHA256 is used to
 avoid preimage and collision attacks.
 
 Peer verification is expected to be performed in an out-of-band manner.
-The best approach is for an application developer enable their application
+The best approach is for an application developer to enable their application
 to email or SMS the fingerprint of user Alice to user Bob. Once Bob has Alice's 
-fingerprint, he can use it verify the keys sent by the Crypton server. If they
-don't match, the user can suspect the server is acting maliciously. If they
+fingerprint, Bob can use it to verify the keys sent by the Crypton server. If they
+don't match, Bob can suspect the server is acting maliciously. If they
 do match, Bob can \(trust()\) Alice's peer object by storing her \(fingerprint\)
 in his Trust State Container.
 
@@ -374,7 +371,7 @@ in his Trust State Container.
 The Trust State Container is a normal Crypton container that is created
 during account generation. When the \(trust()\) method on a peer object is called,
 their fingerprint is stored in this container along with their username. This
-container may be used as a "contacts list", but should be treated as readonly
+container may be used as a "contacts list", but should be treated as read-only
 on the application level.
 
 These verification steps allow for a system that can detect changed fingerprints
@@ -436,17 +433,16 @@ For users who wish to verify the fingerprint manually, it is presented on the
 bottom of the Card as a series of two-octet sections (for readability). The
 sections are assigned a hexadecimal color by taking their first octet for the
 red value, second octet for the green value, and the first octet of the next section
-for their blue value - this provides cascading errors which further draw the user's
+for their blue value, this provides cascading errors which further draw the user's
 attention to discrepancies. Colorization is not to be relied upon as a verification
-mechanism, only to make it easier to identify differences in the content of the
-fingerprint.
+mechanism. It is only to make it easier to identify differences in the content of the fingerprint.
 
 \section{Threat Model}
 \subsection{Assumptions}
 Crypton has initially been developed in JavaScript. However, there are no
-apparent difficulties in porting its concepts to a another language.
+apparent difficulties in porting its concepts to another language.
 In its use of JavaScript, it could be easily assumed that Crypton was meant to
-be used in a web browser - this is incorrect. Browsers are beset by a problem of
+be used in a web browser. This is incorrect. Browsers are beset by a problem of
 unverifiable code delivery in that users cannot verify that the script they received
 from the server is as intended. Therefore, it is only recommended to use
 Crypton in packaged applications. Tools such as Cordova\cite{cordova} or
@@ -498,14 +494,14 @@ load a container, all of these records must be decrypted and parsed by the clien
 As a result, loading a container will grow slower over the course of its lifetime
 if it is constantly updated.
 
-Container compaction would add a new transaction chunk type which, when provided with
+Container compaction would add a new transaction chunk type, which, when provided with
 the ultimate desired state of the container (and barring transactional conflicts),
 would remove all past records for that container and leave only the latest state.
 This would decrease load times for heavily used containers significantly.
 
 "Autocompaction" is also an interesting avenue to pursue, where compaction would occur
 automatically upon saving a container. This would be useful for applications which
-don't care to save historical versions of their data structures.
+do not care to save historical versions of their data structures.
 
 \subsection{Container caching}
 Another improvement to container load times would be to cache encrypted container
@@ -540,8 +536,8 @@ centered on privacy to become proficient in cryptographic primitives and their
 use in secure cryptosystems. This being the case, Crypton is a small step
 toward a more private application development future.
 
-The chief concern of Crypton is the user experience of developers from the API level
-all the way up to the user interface endusers utilize for key exchange. With the
+The chief concern of Crypton is the user experience from developer APIs
+all the way up to the user interface endusers operate for key exchange. With the
 cryptography hidden from the developer and new metaphors like "ID cards" to replace
 "key exchange", the authors think the way is paved toward every developer having
 the ability to create simple, secure, and private applications.
