@@ -233,7 +233,7 @@ in this paper as they are numerous and can largely be inferred.
 \subsubsection{Transaction Lifecycle}
 Transactions must first be created which provides a unique identifier for
 all future actions regarding that transaction. Transaction Chunks can be added
-by the batch or one at a time. Transactions must have one or more Chunks to be
+in batch or one at a time. Transactions must have one or more Chunks to be
 considered valid.
 
 When a client is done composing a transaction, it may request the backend
@@ -433,7 +433,7 @@ For users who wish to verify the fingerprint manually, it is presented on the
 bottom of the Card as a series of two-octet sections (for readability). The
 sections are assigned a hexadecimal color by taking their first octet for the
 red value, second octet for the green value, and the first octet of the next section
-for their blue value, this provides cascading errors which further draw the user's
+for their blue value - this provides cascading errors which further draw the user's
 attention to discrepancies. Colorization is not to be relied upon as a verification
 mechanism. It is only to make it easier to identify differences in the content of the fingerprint.
 
@@ -537,7 +537,7 @@ use in secure cryptosystems. This being the case, Crypton is a small step
 toward a more private application development future.
 
 The chief concern of Crypton is the user experience from developer APIs
-all the way up to the user interface endusers operate for key exchange. With the
+all the way up to the user interface end users operate for key exchange. With the
 cryptography hidden from the developer and new metaphors like "ID cards" to replace
 "key exchange", the authors think the way is paved toward every developer having
 the ability to create simple, secure, and private applications.
